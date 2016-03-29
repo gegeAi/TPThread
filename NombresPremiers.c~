@@ -8,7 +8,25 @@ void print_prime_factors(int n);
 
 int main()
 {
-	print_prime_factors(4938);
+	FILE * f;
+	if((f=fopen("numbers.txt","r")) != NULL)
+	{
+		int n;
+		while(fscanf(f, "%d",&n) != EOF)
+		{
+			print_prime_factors(n);
+			printf("\n");
+		}
+		fclose(f);
+	}
+
+	/*int t;
+	int * tp = nombresPremiers(41, &t);
+	int i=0;
+	for(i=0; i<t; i++)
+	{
+		printf("%d\n", tp[i]);
+	}*/
 	return 0;
 }
 
@@ -40,12 +58,12 @@ int * nombresPremiers(int n, int * taille)
 
 int * factorisation(int n, int * taille)
 {
-	int * renvoi = (int *) malloc(sizeof(int)*((int)(n/3)));
+	int * renvoi = (int *) malloc(sizeof(int)*((int)sqrt(n)+1));
 	int indice = 0;
 	int taillePremier=0;
-	int * tabPremier = nombresPremiers(n, &taillePremier);
+	int * tabPremier = nombresPremiers(sqrt(n)+2, &taillePremier);
 	int i;
-	for(i=0; i*i<taillePremier; i++)
+	for(i=0; i<taillePremier; i++)
 	{
 		if(n%tabPremier[i]==0)
 		{
