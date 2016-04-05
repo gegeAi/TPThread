@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdint.h>
+#include <pthread.h>
 
 uint64_t * nombresPremiers(uint64_t n, int * taille);
 uint64_t * factorisation(uint64_t n, int * taille);
-void print_prime_factors(uint64_t n);
+void * print_prime_factors(void * n);
+
+static pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
 
 int main()
 {
@@ -13,13 +16,29 @@ int main()
 	if((f=fopen("numbers.txt","r")) != NULL)
 	{
 		uint64_t n;
+		uint64_t n2;
 		while(fscanf(f, "%lld",&n) != EOF)
 		{
-			print_prime_factors(n);
-			printf("\n");
+			pthread_t t1=0;
+			pthread_t t2=0;
+			pthread_create(&t1, NULL, print_prime_factors, &n);
+			if(fscanf(f, "%lld",&n) != EOF)
+			{
+				pthread_create(&t1, NULL, print_prime_factors, &n2);
+			}
+
+			pthread_join(t1, NULL);
+
+			if(t2 != 0)
+			{
+				pthread_join(t1, NULL);
+
+			} 
 		}
 		fclose(f);
 	}
+
+	pthread_mutex_destroy(&mutex);
 	
 	return 0;
 }
@@ -76,17 +95,23 @@ uint64_t * factorisation(uint64_t n, int * taille)
 	return renvoi;
 }
 
-void print_prime_factors(uint64_t n)
+void * print_prime_factors(void * n)
 {
+	uint64_t nombre = *(uint64_t*)n;
 	int t=0;
-	uint64_t * tab = factorisation(n, &t);
+	uint64_t * tab = factorisation(nombre, &t);
 	int i;
-	printf("%d : ", n);
+	pthread_mutex_lock(&mutex);
+	printf("%lld : ", nombre);
 	for(i=0; i<t; i++)
 	{
-		printf(" %d", tab[i]);
+		printf(" %lld", tab[i]);
 	}
+	printf("\n");
+	pthread_mutex_unlock(&mutex);
 	free(tab);
+
+	pthread_exit(NULL);
 }
 
 
