@@ -1,18 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h>
 
-int * nombresPremiers(int n, int * taille);
-int * factorisation(int n, int * taille);
-void print_prime_factors(int n);
+uint64_t * nombresPremiers(uint64_t n, int * taille);
+uint64_t * factorisation(uint64_t n, int * taille);
+void print_prime_factors(uint64_t n);
 
 int main()
 {
 	FILE * f;
 	if((f=fopen("numbers.txt","r")) != NULL)
 	{
-		int n;
-		while(fscanf(f, "%d",&n) != EOF)
+		uint64_t n;
+		while(fscanf(f, "%lld",&n) != EOF)
 		{
 			print_prime_factors(n);
 			printf("\n");
@@ -23,12 +24,13 @@ int main()
 	return 0;
 }
 
-int * nombresPremiers(int n, int * taille)
+uint64_t * nombresPremiers(uint64_t n, int * taille)
 {
-	int i;
-	int * renvoi = (int *) malloc(sizeof(int)*n);
-	int indice = 0; 
-	for(i=2; i<=n; i++)
+	uint64_t i;
+	uint64_t * renvoi = (uint64_t *) malloc(sizeof(uint64_t)*n);
+	int indice = 1; 
+	renvoi[0]=2;
+	for(i=3; i<=n; i+=2)
 	{
 		int j;
 		short premier=1;
@@ -49,12 +51,12 @@ int * nombresPremiers(int n, int * taille)
 	return renvoi;
 }
 
-int * factorisation(int n, int * taille)
+uint64_t * factorisation(uint64_t n, int * taille)
 {
-	int * renvoi = (int *) malloc(sizeof(int)*((int)sqrt(n)+1));
+	uint64_t * renvoi = (uint64_t *) malloc(sizeof(uint64_t)*((uint64_t)sqrt(n)+1));
 	int indice = 0;
 	int taillePremier=0;
-	int * tabPremier = nombresPremiers(sqrt(n)+2, &taillePremier);
+	uint64_t * tabPremier = nombresPremiers(sqrt(n)+2, &taillePremier);
 	int i;
 	for(i=0; i<taillePremier; i++)
 	{
@@ -70,19 +72,21 @@ int * factorisation(int n, int * taille)
 		renvoi[indice++]=n;
 	}
 	*taille=indice;
+	free(tabPremier);
 	return renvoi;
 }
 
-void print_prime_factors(int n)
+void print_prime_factors(uint64_t n)
 {
 	int t=0;
-	int * tab = factorisation(n, &t);
+	uint64_t * tab = factorisation(n, &t);
 	int i;
 	printf("%d : ", n);
 	for(i=0; i<t; i++)
 	{
 		printf(" %d", tab[i]);
 	}
+	free(tab);
 }
 
 
