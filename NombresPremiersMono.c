@@ -28,21 +28,16 @@ uint64_t * nombresPremiers(uint64_t n, int * taille)
 {
 	uint64_t i;
 	uint64_t * renvoi = (uint64_t *) malloc(sizeof(uint64_t)*n);
-	int indice = 1; 
+	int indice = 2; 
+	int saut = 2;
 	renvoi[0]=2;
-	for(i=3; i<=n; i+=2)
+	renvoi[1]=3;
+	for(i=5; i<=n; i+=saut, saut=6-saut)
 	{
-		int j;
-		short premier=1;
-		for(j=i-1; j>1; j--)
-		{
-			if(i%j==0)
-			{
-				premier=0;
-			}
-		}
+		uint64_t j;
+		for(j=(uint64_t)(sqrt(i-1)+1); j>1 && i%j!=0; j--);
 
-		if(premier==1)
+		if(j=1)
 		{
 			renvoi[indice++] = i;
 		}
@@ -58,11 +53,13 @@ uint64_t * factorisation(uint64_t n, int * taille)
 	int taillePremier=0;
 	uint64_t * tabPremier = nombresPremiers(sqrt(n)+2, &taillePremier);
 	int i;
-	for(i=0; i<taillePremier; i++)
+	uint64_t produit = 1;
+	for(i=0; i<taillePremier && produit < n; i++)
 	{
 		if(n%tabPremier[i]==0)
 		{
 			renvoi[indice++]=tabPremier[i];
+			produit *= tabPremier[i];
 			n/=tabPremier[i];
 			i--;
 		}
@@ -81,10 +78,10 @@ void print_prime_factors(uint64_t n)
 	int t=0;
 	uint64_t * tab = factorisation(n, &t);
 	int i;
-	printf("%d : ", n);
+	printf("%lld : ", n);
 	for(i=0; i<t; i++)
 	{
-		printf(" %d", tab[i]);
+		printf(" %lld", tab[i]);
 	}
 	free(tab);
 }
