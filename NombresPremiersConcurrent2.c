@@ -66,7 +66,7 @@ Liste * factorisation(uint64_t n)
 	Liste * finListe = renvoi;
 	int nbDepart = n;
 	int taillePremier=0;
-	uint64_t * tabPremier = nombresPremiers((uint64_t)(sqrt(n)+1), &taillePremier);
+	uint64_t * tabPremier = nombresPremiers(n, &taillePremier);
 	int i;
 	uint64_t produit = 1;
 	for(i=0; i<taillePremier && produit < nbDepart; i++)
